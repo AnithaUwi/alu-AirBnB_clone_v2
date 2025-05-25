@@ -114,41 +114,32 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Creates a new instance of a class with given parameters."""
-        split_args = args.split()
-        if not split_args:
+        """ Create an object of any class"""
+        split_args = args.split(' ')
+        if not args:
             print("** class name missing **")
             return
-
-        class_name = split_args[0]
-        if class_name not in HBNBCommand.classes:
+        elif split_args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        kwargs = {}
-        for param in split_args[1:]:
-            if '=' not in param:
-                continue
-            key, value = param.split('=', 1)
-            # Handle string with quotes
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1].replace('_', ' ').replace('\\"', '"')
-            else:
-                # Try parsing as int or float
-                try:
-                    if '.' in value:
-                        value = float(value)
-                    else:
-                        value = int(value)
-                except ValueError:
-                    continue  # Skip invalid values
-
-            kwargs[key] = value
-
-        new_instance = HBNBCommand.classes[class_name](**kwargs)
+        # Handle args parameters
+        new_dict = {}
+        if len(split_args) > 1:
+            for arg in split_args[1:]:
+                key, value = arg.split('=')
+                if value[0] == '"':
+                    value = value.strip('"').replace('_', ' ')
+                else:
+                    try:
+                        value = eval(value)
+                    except NameError or SyntaxError:
+                        continue
+                new_dict[key] = value
+        new_instance = HBNBCommand.classes[split_args[0]](**new_dict)
         storage.new(new_instance)
-        storage.save()
         print(new_instance.id)
+        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
