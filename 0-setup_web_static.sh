@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 #Setting up web servers for the web_static deployment
-
 sudo apt-get update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
